@@ -59,6 +59,13 @@ For ORDERS (ask in this order):
 - order_id: For get/complete operations (extract from "order #120", "order 120", or just "120")
 - FILTERS for list_orders action - extract these from user queries:
   * status: "pending", "completed", "under_process", "cancelled" (can be multiple: "pending,under_process")
+    IMPORTANT BUSINESS LOGIC: When user asks for "pending orders" without being specific, 
+    they mean BOTH "pending" AND "under_process" statuses. So:
+    - "list pending orders" → status: "pending,under_process"
+    - "show pending orders" → status: "pending,under_process"
+    - "check pending" → status: "pending,under_process"
+    ONLY use status: "pending" alone if user explicitly says "only pending" or "just pending status"
+    ONLY use status: "under_process" alone if user explicitly says "under process" or "processing"
   * tags: Extract tag names (e.g., "orders tagged with HK" → tags: "HK")
   * handler: Extract handler name (e.g., "orders with handler morning" → handler: "morning")
   * customer: Extract customer name (e.g., "orders from Kevin" → customer: "Kevin")
@@ -72,12 +79,16 @@ For ORDERS (ask in this order):
   * currencyPair: Extract currency pair (e.g., "USDT/HKD orders" → currencyPair: "USDT/HKD")
   
   Examples:
-  - "check pending orders tagged with HK" → {status: "pending", tags: "HK"}
+  - "check pending orders tagged with HK" → {status: "pending,under_process", tags: "HK"}
+  - "list pending orders" → {status: "pending,under_process"}
+  - "show pending" → {status: "pending,under_process"}
   - "show orders from Kevin" → {customer: "Kevin"}
   - "list last week orders" → {dateRange: "last_week"}
   - "orders with handler morning" → {handler: "morning"}
   - "orders created by admin" → {createdBy: "admin"}
   - "check orders created by morning" → {createdBy: "morning"}
+  - "show completed orders" → {status: "completed"}
+  - "list under process orders" → {status: "under_process"}
   - "USDT/HKD orders from last month" → {currencyPair: "USDT/HKD", dateRange: "last_month"}
 
 For EXPENSES:
