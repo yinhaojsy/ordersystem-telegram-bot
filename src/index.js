@@ -15,6 +15,13 @@ if (!botToken) {
 
 // Create bot instance
 const bot = new TelegramBot(botToken, { polling: true });
+let botUsername = '';
+
+// Cache bot username at startup
+bot.getMe().then(botInfo => {
+  botUsername = botInfo.username;
+  console.log(`🤖 Bot username: @${botUsername}`);
+});
 
 console.log('🤖 Bot instance created, setting up message handler...');
 
@@ -23,10 +30,30 @@ bot.on('message', async (msg) => {
   const chatId = msg.chat.id;
   const userId = msg.from.id;
   const username = msg.from.username || msg.from.first_name;
-  const text = msg.text;
+  let text = msg.text;
 
   // Ignore messages without text
   if (!text) return;
+
+  // Check if this is a group chat and bot is mentioned
+  const isGroupChat = msg.chat.type === 'group' || msg.chat.type === 'supergroup';
+  
+  // In group chats, only respond if bot is mentioned
+  if (isGroupChat && botUsername) {
+    const isMentioned = text.includes(`@${botUsername}`) || 
+                        (msg.entities && msg.entities.some(entity => 
+                          entity.type === 'mention' && 
+                          text.substring(entity.offset, entity.offset + entity.length) === `@${botUsername}`
+                        ));
+    
+    if (!isMentioned) {
+      console.log(`⏭️  Skipping message in group chat - bot not mentioned`);
+      return;
+    }
+    
+    // Remove the bot mention from the text for processing
+    text = text.replace(new RegExp(`@${botUsername}`, 'g'), '').trim();
+  }
 
   console.log(`📩 Message from ${username} (${userId}) in chat ${chatId}: ${text}`);
 
