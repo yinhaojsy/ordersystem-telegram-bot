@@ -1,0 +1,22 @@
+{
+  "name": "ordersystem-telegram-bot",
+  "version": "1.0.0",
+  "description": "Telegram bot for order system management",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js",
+    "check-env": "node check-env.js"
+  },
+  "keywords": ["telegram", "bot", "orders"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "node-telegram-bot-api": "^0.66.0",
+    "openai": "^4.73.0",
+    "axios": "^1.7.0",
+    "dotenv": "^16.4.0",
+    "express": "^4.18.2"
+  }
+}
