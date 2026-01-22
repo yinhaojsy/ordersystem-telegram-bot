@@ -68,6 +68,9 @@ function formatNotification(notification) {
     'expense_deleted': '🗑️',
     'transfer_created': '🔄',
     'transfer_deleted': '🗑️',
+    'wallet_incoming': '📥',
+    'wallet_outgoing': '📤',
+    'wallet_transaction': '💳',
   };
 
   const icon = icons[type] || '🔔';
